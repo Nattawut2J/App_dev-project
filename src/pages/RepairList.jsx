@@ -7,8 +7,18 @@ export default function RepairList() {
 
   // READ: ดึงข้อมูล
   const fetchRequests = async () => {
-    const { data } = await supabase.from('repair_requests').select('*').order('id', { ascending: false })
-    setRequests(data)
+    const { data, error } = await supabase
+      .from('repair_requests')
+      .select('*')
+      .order('id', { ascending: false })
+
+    if (error) {
+      console.error('Failed to load repair requests:', error)
+      setRequests([])
+      return
+    }
+
+    setRequests(data || [])
   }
 
   useEffect(() => { fetchRequests() }, [])
