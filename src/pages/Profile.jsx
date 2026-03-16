@@ -16,12 +16,14 @@ export default function Profile() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '480px', margin: 'auto' }}>
-      <h2>Profile</h2>
-      <div style={{ padding: '16px', border: '1px solid #ccc', borderRadius: 12, marginBottom: 20 }}>
-        <p>
+      <h2 className="profile-title">Profile
+        <div style={{color: '#130d0d', fontSize: '14px', marginTop: '4px'}}>Welcome! {user.email}</div>
+      </h2>
+      <div style={{ padding: '16px', border: '1px solid #646f7a', borderRadius: 12, marginBottom: 20 }}>
+        <p className="user-info">
           <strong>Email:</strong> {user.email}
         </p>
-        <p>
+        <p className="user-info">
           <strong>User ID:</strong> {user.id}
         </p>
       </div>

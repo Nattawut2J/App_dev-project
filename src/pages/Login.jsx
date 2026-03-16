@@ -45,7 +45,15 @@ export default function Login() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto' }}>
+    <div style={{ 
+      padding: '20px', 
+      maxWidth: '400px', 
+      margin: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      minHeight: '100vh'
+    }}>
       <h2>ระบบแจ้งซ่อม (Login)</h2>
       <form>
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ display: 'block', width: '100%', marginBottom: '10px' }} />
