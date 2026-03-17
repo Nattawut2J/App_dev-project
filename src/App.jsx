@@ -1,6 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import RepairForm from './pages/RepairForm'
+import EditRepairForm from './pages/EditRepairForm'
+import RepairHistory from './pages/RepairHistory'
 import Layout from './pages/layout'
 import { AuthProvider, useAuth } from './lib/auth.jsx'
 
@@ -22,8 +25,9 @@ function AppRoutes() {
     <Layout>
       <Routes>
         <Route path="/dashboard" element={<div>Dashboard Page</div>} />
-        <Route path="/repair-form" element={<div>Repair Form Page</div>} />
-        <Route path="/history" element={<div>History Page</div>} />
+        <Route path="/repair-form" element={<RepairForm />} />
+        <Route path="/repair-form/edit/:id" element={<EditRepairForm />} />
+        <Route path="/history" element={<RepairHistory />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
