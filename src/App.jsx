@@ -4,6 +4,7 @@ import Profile from './pages/Profile'
 import RepairForm from './pages/RepairForm'
 import EditRepairForm from './pages/EditRepairForm'
 import RepairHistory from './pages/RepairHistory'
+import Dashboard from './pages/Dashboard'
 import Layout from './pages/layout'
 import { AuthProvider, useAuth } from './lib/auth.jsx'
 
@@ -24,7 +25,7 @@ function AppRoutes() {
   return (
     <Layout>
       <Routes>
-        <Route path="/dashboard" element={<div>Dashboard Page</div>} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/repair-form" element={<RepairForm />} />
         <Route path="/repair-form/edit/:id" element={<EditRepairForm />} />
         <Route path="/history" element={<RepairHistory />} />
