@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/auth.jsx'
+import { Pie } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
 
 const STATUS_COLORS = {
   pending: '#ffa726',
@@ -154,6 +158,7 @@ export default function AdminDashboard() {
     )
   }
 
+
   if (error) {
     return (
       <div style={{ padding: '20px', textAlign: 'center', color: '#c0392b' }}>
@@ -190,6 +195,100 @@ export default function AdminDashboard() {
       {/* ── Overview Tab ── */}
       {activeTab === 'overview' && (
         <div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+              gap: '24px',
+              marginBottom: '30px',
+            }}
+          >
+            {/* Pie Chart */}
+            <div
+              style={{
+                background: 'white',
+                padding: '20px',
+                borderRadius: '10px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#444' }}>
+                ภาพรวมสถานะการแจ้งซ่อม
+              </h3>
+              <div style={{ width: '100%', maxWidth: '280px' }}>
+                <Pie
+                  data={{
+                    labels: ['รอดำเนินการ', 'กำลังดำเนินการ', 'เสร็จสิ้น', 'ยกเลิก'],
+                    datasets: [
+                      {
+                        label: 'จำนวนรายการ',
+                        data: [stats.pending, stats.inProgress, stats.completed, stats.cancelled],
+                        backgroundColor: [
+                          'rgba(255, 167, 38, 0.8)',
+                          'rgba(66, 165, 245, 0.8)',
+                          'rgba(102, 187, 106, 0.8)',
+                          'rgba(239, 83, 80, 0.8)',
+                        ],
+                        borderColor: ['#ffa726', '#42a5f5', '#66bb6a', '#ef5350'],
+                        borderWidth: 1,
+                      },
+                    ],
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* User stats */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                justifyContent: 'space-between',
+              }}
+            >
+              {[
+                { label: 'ผู้ใช้ทั้งหมด', value: profiles.length, gradient: 'linear-gradient(135deg, #26c6da, #0097a7)' },
+                { label: 'ช่างเทคนิค', value: technicians.length, gradient: 'linear-gradient(135deg, #ab47bc, #7b1fa2)' },
+                {
+                  label: 'รอการอนุมัติ',
+                  value: profiles.filter((p) => p.role === 'pending').length,
+                  gradient: 'linear-gradient(135deg, #ff7043, #d84315)',
+                },
+              ].map((card) => (
+                <div
+                  key={card.label}
+                  style={{
+                    background: card.gradient,
+                    color: 'white',
+                    padding: '15px 20px',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <h3 style={{ margin: '0 0 8px', fontSize: '14px', opacity: 0.9 }}>{card.label}</h3>
+                  <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{card.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Repair stats */}
           <div
             style={{
@@ -205,40 +304,6 @@ export default function AdminDashboard() {
               { label: 'กำลังดำเนินการ', value: stats.inProgress, gradient: 'linear-gradient(135deg, #42a5f5, #1976d2)' },
               { label: 'เสร็จสิ้น', value: stats.completed, gradient: 'linear-gradient(135deg, #66bb6a, #388e3c)' },
               { label: 'ยกเลิก', value: stats.cancelled, gradient: 'linear-gradient(135deg, #ef5350, #c62828)' },
-            ].map((card) => (
-              <div
-                key={card.label}
-                style={{
-                  background: card.gradient,
-                  color: 'white',
-                  padding: '20px',
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                }}
-              >
-                <h3 style={{ margin: '0 0 10px', fontSize: '14px', opacity: 0.9 }}>{card.label}</h3>
-                <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{card.value}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* User stats */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '16px',
-              marginBottom: '30px',
-            }}
-          >
-            {[
-              { label: 'ผู้ใช้ทั้งหมด', value: profiles.length, gradient: 'linear-gradient(135deg, #26c6da, #0097a7)' },
-              { label: 'ช่างเทคนิค', value: technicians.length, gradient: 'linear-gradient(135deg, #ab47bc, #7b1fa2)' },
-              {
-                label: 'รอการอนุมัติ',
-                value: profiles.filter((p) => p.role === 'pending').length,
-                gradient: 'linear-gradient(135deg, #ff7043, #d84315)',
-              },
             ].map((card) => (
               <div
                 key={card.label}
