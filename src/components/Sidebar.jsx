@@ -1,14 +1,22 @@
 import { Link, useLocation } from 'react-router-dom'
-import { FaTachometerAlt, FaTools, FaHistory, FaUser } from 'react-icons/fa'
+import { FaTachometerAlt, FaTools, FaHistory, FaUser, FaUserShield, FaWrench } from 'react-icons/fa'
+import { useAuth } from '../lib/auth.jsx'
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const location = useLocation()
+  const { userRole } = useAuth()
 
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
     { path: '/repair-form', label: 'แจ้งซ่อม', icon: FaTools },
     { path: '/history', label: 'ประวัติแจ้งซ่อม', icon: FaHistory },
     { path: '/profile', label: 'Profile', icon: FaUser },
+    ...(userRole === 'technician' || userRole === 'admin'
+      ? [{ path: '/technician', label: 'งานของฉัน', icon: FaWrench }]
+      : []),
+    ...(userRole === 'admin'
+      ? [{ path: '/admin', label: 'ผู้ดูแลระบบ', icon: FaUserShield }]
+      : []),
   ]
 
   return (

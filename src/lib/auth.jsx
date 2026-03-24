@@ -5,6 +5,7 @@ const AuthContext = createContext({
   user: null,
   session: null,
   loading: true,
+  userRole: 'user',
   signOut: async () => {},
 })
 
@@ -12,6 +13,8 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState('user')
+  const [roleLoading, setRoleLoading] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -37,6 +40,23 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (!user) {
+      setUserRole('user')
+      return
+    }
+    setRoleLoading(true)
+    supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        setUserRole(data?.role || 'user')
+        setRoleLoading(false)
+      })
+  }, [user])
+
   const signOut = async () => {
     await supabase.auth.signOut()
   }
@@ -45,10 +65,11 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       session,
-      loading,
+      loading: loading || roleLoading,
+      userRole,
       signOut,
     }),
-    [user, session, loading],
+    [user, session, loading, roleLoading, userRole],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
