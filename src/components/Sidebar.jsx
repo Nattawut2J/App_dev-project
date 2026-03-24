@@ -11,7 +11,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     { path: '/repair-form', label: 'แจ้งซ่อม', icon: FaTools },
     { path: '/history', label: 'ประวัติแจ้งซ่อม', icon: FaHistory },
     { path: '/profile', label: 'Profile', icon: FaUser },
-    ...(userRole === 'technician' || userRole === 'admin'
+    ...(userRole === 'technician'
       ? [{ path: '/technician', label: 'งานของฉัน', icon: FaWrench }]
       : []),
     ...(userRole === 'admin'
