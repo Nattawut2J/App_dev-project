@@ -27,10 +27,9 @@ export default function RepairForm() {
       {
         user_id: user?.id,
         client_name: name,
-        device_type: deviceType,
-        device_model: deviceModel,
-        issue,
-        address,
+        device_name: `${deviceType} ${deviceModel}`,
+        problem_description: issue,
+        address: address,
         status: 'pending',
       },
     ])
@@ -65,7 +64,6 @@ export default function RepairForm() {
               placeholder="ชื่อ"
             />
           </div>
-
           <div className="form-group">
             <label className="form-label">ประเภทอุปกรณ์</label>
             <input
