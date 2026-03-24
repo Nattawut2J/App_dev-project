@@ -48,10 +48,13 @@ export default function EditRepairForm() {
       return
     }
 
+    const [type, ...modelParts] = (data.device_name || '').split(' ')
+    const model = modelParts.join(' ')
+
     setName(data.client_name)
-    setDeviceType(data.device_type)
-    setDeviceModel(data.device_model)
-    setIssue(data.issue)
+    setDeviceType(type)
+    setDeviceModel(model)
+    setIssue(data.problem_description)
     setAddress(data.address)
     setStatus(data.status)
   }
@@ -70,9 +73,8 @@ export default function EditRepairForm() {
       .from('repair_requests')
       .update({
         client_name: name,
-        device_type: deviceType,
-        device_model: deviceModel,
-        issue,
+        device_name: `${deviceType} ${deviceModel}`,
+        problem_description: issue,
         address,
       })
       .eq('id', id)

@@ -40,10 +40,16 @@ export default function RepairHistory() {
   const deleteRequest = async (id) => {
     if (!window.confirm('คุณต้องการลบรายการนี้หรือไม่?')) return
 
-    const { error } = await supabase.from('repair_requests').delete().eq('id', id)
+    const { error, data } = await supabase.from('repair_requests').delete().eq('id', id).select()
 
     if (error) {
-      alert('ไม่สามารถลบรายการได้')
+      console.error('Delete error:', error)
+      alert('เกิดข้อผิดพลาดในการลบรายการ')
+      return
+    }
+
+    if (data.length === 0) {
+      alert('ไม่สามารถลบรายการได้ (อาจเกิดจากปัญหาเรื่องสิทธิ์การเข้าถึง หรือรายการถูกลบไปแล้ว)')
       return
     }
 
@@ -96,7 +102,6 @@ export default function RepairHistory() {
               <tr>
                 <th>ลำดับ</th>
                 <th>อุปกรณ์</th>
-                <th>ชื่อรุ่น</th>
                 <th>ปัญหา</th>
                 <th>สถานะ</th>
                 <th>วันที่</th>
@@ -107,9 +112,8 @@ export default function RepairHistory() {
               {requests.map((request, index) => (
                 <tr key={request.id}>
                   <td>{index + 1}</td>
-                  <td>{request.device_type}</td>
-                  <td>{request.device_model}</td>
-                  <td>{request.issue.substring(0, 30)}...</td>
+                  <td>{request.device_name}</td>
+                  <td>{request.problem_description?.substring(0, 30) || ''}...</td>
                   <td>{getStatusBadge(request.status)}</td>
                   <td>{new Date(request.created_at).toLocaleDateString('th-TH')}</td>
                   <td>
@@ -127,9 +131,15 @@ export default function RepairHistory() {
                           แก้ไข
                         </button>
                       )}
-                      <button className="btn-delete" onClick={() => deleteRequest(request.id)}>
-                        ลบ
-                      </button>
+                       {request.status === 'pending' ? (
+                        <button className="btn-delete" onClick={() => deleteRequest(request.id)}>
+                          ลบ
+                        </button>
+                      ) : (
+                        <button className="btn-delete-disabled" disabled title="ไม่สามารถลบได้">
+                          ลบ
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
